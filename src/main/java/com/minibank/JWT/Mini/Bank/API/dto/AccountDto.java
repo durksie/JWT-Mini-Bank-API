@@ -15,4 +15,10 @@ public class AccountDto {
     private String accountNumber;
     private BigDecimal balance;
     private String username;
+    private String accountType;
+    private String accountTypeDisplayName;
+    private double minimumBalance;
+    private double maximumBalance;
+
+
 }

@@ -1,5 +1,6 @@
 package com.minibank.JWT.Mini.Bank.API.model;
 
+import com.minibank.JWT.Mini.Bank.API.enums.AccountType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,9 +34,30 @@ public class AccountEntity {
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
     private List<TransactionEntity>transactionEntities= new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AccountType accountType;
+
     @PrePersist
-    private void generateAccountNumber(){
-        //generate random 10-digit account number
-        this.accountNumber="ACC"+ System.currentTimeMillis() % 10000000000L;
+    private void generateAccountNumber() {
+
+        if (this.accountNumber != null) return;
+
+        String prefix = getAccountTypePrefix();
+
+        this.accountNumber =
+                prefix +
+                        System.currentTimeMillis() +
+                        String.format("%03d", (int)(Math.random() * 1000));
     }
-}
+
+    private String getAccountTypePrefix() {
+        return switch (accountType) {
+            case EASY -> "EASY";
+            case ASPIRE -> "ASP";
+            case PREMIER -> "PRM";
+            case PRIVATE_CLIENTS -> "PCL";
+            case PRIVATE_WEALTH -> "PWL";
+        };
+}}
+

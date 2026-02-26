@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,16 +27,35 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)throws  Exception{
-        http
-                .csrf(csrf->csrf.disable())
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth->auth.requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated());
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(customUserDetailsService);
 
-        return  http.build();
-
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
+
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           DaoAuthenticationProvider provider) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth ->
+                        auth
+                                .requestMatchers("/api/auth/**").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .authenticationProvider(provider)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception{

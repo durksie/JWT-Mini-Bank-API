@@ -11,40 +11,37 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+
 
 @Component
 public class JwtGenerator {
-    private static final Logger logger = (Logger) LoggerFactory.getLogger(JwtGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtGenerator.class);
 
-    //@Value("${jwt.secret}")
-    private String jwtSecret;
 
-    //@Value("${jwt.expiration}")
-    private int jwtExpiration;
 
     //converts the secret key into cryptographic object that Java's security libraries can actually use to sign or verify tokens.
-    private Key key(){
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-    }
+    private final SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+
     public String generateToken(Authentication authentication){
         String username= authentication.getName();
         Date currentDate=new Date();
-        Date expireDate= new Date(currentDate.getTime()+jwtExpiration);
+        Date expireDate= new Date(currentDate.getTime()+SecurityConstants.JWT_EXPIRATION);
 
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(currentDate)
                 .setExpiration(expireDate)
-                .signWith(key(), SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
     public String getUsernameFromJwt(String token){
         Claims claims=Jwts.parserBuilder()
-                .setSigningKey(key())
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -53,7 +50,7 @@ public class JwtGenerator {
     public boolean validateToken(String token){
         try{
             Jwts.parserBuilder()
-                    .setSigningKey(key())
+                    .setSigningKey(key)
                     .build()
                     .parse(token);
             return  true;

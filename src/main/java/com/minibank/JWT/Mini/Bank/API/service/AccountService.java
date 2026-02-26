@@ -8,100 +8,167 @@ import com.minibank.JWT.Mini.Bank.API.repository.AccountRepository;
 import com.minibank.JWT.Mini.Bank.API.repository.TransactionRepository;
 import com.minibank.JWT.Mini.Bank.API.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService {
-    @Autowired
-    private AccountRepository accountRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final Logger logger =
+            LoggerFactory.getLogger(AccountService.class);
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
 
-    public AccountDto getAccountDetails(){
-        UserEntity userEntity=getCurrentUser();
-        AccountEntity accountEntity= accountRepository.findByUser(userEntity)
-                .orElseThrow(()->new RuntimeException("Account not found"));
-        return new AccountDto(
-                accountEntity.getId(),
-                accountEntity.getAccountNumber(),
-                accountEntity.getBalance(),
-                userEntity.getUsername()
-        );
+    // ================= GET ACCOUNT =================
+
+    public AccountDto getAccountDetails() {
+
+        UserEntity user = getCurrentUser();
+
+        AccountEntity account = accountRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        logger.info("Retrieved account for user {} type {}",
+                user.getUsername(),
+                account.getAccountType().getDisplayName());
+
+        return mapToDto(account);
     }
+
+
+    // ================= DEPOSIT =================
+
     @Transactional
-    public  AccountDto deposit(BigDecimal amount){
-        if (amount.compareTo(BigDecimal.ZERO)<=0){
+    public AccountDto deposit(BigDecimal amount){
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new RuntimeException("Amount must be positive");
+
+        UserEntity user = getCurrentUser();
+
+        AccountEntity account = accountRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        BigDecimal newBalance = account.getBalance().add(amount);
+
+        // check max balance rule
+        if (newBalance.compareTo(
+                BigDecimal.valueOf(account.getAccountType().getMaximumBalance())) > 0)
+        {
+            throw new RuntimeException(
+                    "Deposit exceeds maximum balance for "
+                            + account.getAccountType().getDisplayName());
         }
-        UserEntity userEntity=getCurrentUser();
 
-        AccountEntity accountEntity = accountRepository.findByUser(userEntity).orElseThrow(()->new RuntimeException("Account not found"));
+        account.setBalance(newBalance);
+        accountRepository.save(account);
 
-        accountEntity.setBalance(accountEntity.getBalance().add(amount));
-        accountRepository.save(accountEntity);
+        saveTransaction(account, amount,
+                TransactionEntity.TransactionType.DEPOSIT,
+                "Deposit");
 
-        TransactionEntity transactionEntity= new TransactionEntity();
-        transactionEntity.setAmount(amount);
-        transactionEntity.setType(TransactionEntity.TransactionType.DEPOSIT);
-        transactionEntity.setDescription("Deposit to account");
-        transactionEntity.setAccount(accountEntity);
-        transactionRepository.save(transactionEntity);
+        logger.info("Deposit successful {} → new balance {}",
+                amount, account.getBalance());
 
-        return new AccountDto(
-               accountEntity.getId(),
-                accountEntity.getAccountNumber(),
-                accountEntity.getBalance(),
-                userEntity.getUsername()
-        );
+        return mapToDto(account);
     }
+
+
+    // ================= WITHDRAW =================
+
     @Transactional
     public AccountDto withdraw(BigDecimal amount){
-        if (amount.compareTo(BigDecimal.ZERO)<=0){
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new RuntimeException("Amount must be positive");
-        }
 
-        UserEntity userEntity=getCurrentUser();
+        UserEntity user = getCurrentUser();
 
-        AccountEntity accountEntity= accountRepository.findByUser(userEntity)
-                .orElseThrow(()->new RuntimeException("Account not found"));
+        AccountEntity account = accountRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        if (accountEntity.getBalance().compareTo(amount)<0){
+        if (account.getBalance().compareTo(amount) < 0)
             throw new RuntimeException("Insufficient balance");
-        }
-        accountEntity.setBalance(accountEntity.getBalance().subtract(amount));
-        accountRepository.save(accountEntity);
 
-        //create transaction record
-        TransactionEntity transactionEntity= new TransactionEntity();
-        transactionEntity.setAmount(amount);
-        transactionEntity.setType(TransactionEntity.TransactionType.WITHDRAWAL);
-        transactionEntity.setDescription("withdrawal from account");
-        transactionEntity.setAccount(accountEntity);
-        transactionRepository.save(transactionEntity);
+        BigDecimal newBalance = account.getBalance().subtract(amount);
+
+        // check minimum balance rule
+        if (newBalance.compareTo(
+                BigDecimal.valueOf(account.getAccountType().getMinimumBalance())) < 0)
+        {
+            throw new RuntimeException(
+                    "Withdrawal would go below minimum balance for "
+                            + account.getAccountType().getDisplayName());
+        }
+
+        account.setBalance(newBalance);
+        accountRepository.save(account);
+
+        saveTransaction(account, amount,
+                TransactionEntity.TransactionType.WITHDRAWAL,
+                "Withdrawal");
+
+        logger.info("Withdrawal successful {} → new balance {}",
+                amount, account.getBalance());
+
+        return mapToDto(account);
+    }
+
+
+
+    // ================= HELPERS =================
+
+    private void saveTransaction(AccountEntity account,
+                                 BigDecimal amount,
+                                 TransactionEntity.TransactionType type,
+                                 String description){
+
+        TransactionEntity transaction = new TransactionEntity();
+        transaction.setAccount(account);
+        transaction.setAmount(amount);
+        transaction.setType(type);
+        transaction.setDescription(description);
+
+        transactionRepository.save(transaction);
+    }
+
+
+    private AccountDto mapToDto(AccountEntity account){
+
+        var type = account.getAccountType();
 
         return new AccountDto(
-                accountEntity.getId(),
-                accountEntity.getAccountNumber(),
-                accountEntity.getBalance(),
-                userEntity.getUsername()
+                account.getId(),
+                account.getAccountNumber(),
+                account.getBalance(),
+                account.getUser().getUsername(),
+                type.name(),
+                type.getDisplayName(),
+                type.getMinimumBalance(),
+                type.getMaximumBalance()
         );
     }
 
+
     private UserEntity getCurrentUser(){
-        UserDetails userDetails=(UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+
+        UserDetails userDetails =
+                (UserDetails) SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal();
+
         return userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(()->new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
