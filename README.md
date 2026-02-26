@@ -5,37 +5,37 @@ The **Bank Account Management API** is a Spring Boot REST application that simul
 
 This project simulates real-world banking operations with multiple account types, secure authentication, and transaction management. Perfect for learning Spring Security, JWT implementation, and RESTful API design.
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 src/main/java/com/bankapp/
-├── 🎮 controller/             # REST Endpoints for Auth and Banking
+├──  controller/             # REST Endpoints for Auth and Banking
 │   ├── AuthController.java
 │   └── AccountController.java
-├── ⚙️ service/                # Business logic and validation
+├──  service/                # Business logic and validation
 │   ├── UserService.java
 │   ├── AccountService.java
 │   └── TransactionService.java
-├── 📦 repository/             # Spring Data JPA repositories
+├──  repository/             # Spring Data JPA repositories
 │   ├── UserRepository.java
 │   ├── AccountRepository.java
 │   └── TransactionRepository.java
-├── 📑 model/                  # JPA Entities (User, Account, Transaction)
+├──  model/                  # JPA Entities (User, Account, Transaction)
 │   ├── User.java
 │   ├── Account.java
 │   ├── Transaction.java
 │   └── AccountType.java
-├── ✉️ dto/                    # Data Transfer Objects for API requests
+├──  dto/                    # Data Transfer Objects for API requests
 │   ├── LoginDto.java
 │   ├── RegisterDto.java
 │   ├── AccountDto.java
 │   ├── TransactionDto.java
 │   └── JwtResponseDto.java
-├── 🔐 security/               # JWT & Security implementation
+├──  security/               # JWT & Security implementation
 │   ├── JwtGenerator.java
 │   ├── JwtFilter.java
 │   └── CustomUserDetailsService.java
-└── 🛠️ config/                 # Global configurations
+└──  config/                 # Global configurations
     └── SecurityConfig.java
 ```
 
