@@ -129,7 +129,7 @@ The application will be accessible at``` http://localhost:8080```
 # API Documentation
 Authentication Endpoints
 1. Get Available Account Types
-   ```GET /api/auth/account-types```
+   ```GET-http://localhost:8080/api/auth/account-types```
 
 ## json Response
 ```
@@ -149,7 +149,7 @@ Authentication Endpoints
 
 2. Register New User
 ```
-POST /api/auth/register
+POST-http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
@@ -166,7 +166,7 @@ Content-Type: application/json
 ```
 3. Login
 ```
-POST /api/auth/login
+POST -http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
@@ -186,7 +186,7 @@ Content-Type: application/json
 # Protected Endpoints (Require JWT Token)
 Include in Header:``` Authorization:``` ```Bearer <your-token>```
 4. Get Account Details
-GET /api/account
+GET-http://localhost:8080/api/account
 ## Response
 ```
 {
@@ -230,7 +230,7 @@ POST /api/account/withdraw?amount=3000
 }
 ```
 7. View Transaction History
-GET /api/account/transactions
+GET- http://localhost:8080/api/account/transactions
 ## Response
 ```
 {
