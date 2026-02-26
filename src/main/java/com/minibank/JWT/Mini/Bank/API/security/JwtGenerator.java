@@ -26,7 +26,7 @@ public class JwtGenerator {
 
     //converts the secret key into cryptographic object that Java's security libraries can actually use to sign or verify tokens.
     private final SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_SECRET.getBytes(StandardCharsets.UTF_8));
-
+//generates token
     public String generateToken(Authentication authentication){
         String username= authentication.getName();
         Date currentDate=new Date();
@@ -39,6 +39,7 @@ public class JwtGenerator {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+    //gets the username
     public String getUsernameFromJwt(String token){
         Claims claims=Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -47,6 +48,7 @@ public class JwtGenerator {
                 .getBody();
         return claims.getSubject();
     }
+    //validate the token
     public boolean validateToken(String token){
         try{
             Jwts.parserBuilder()

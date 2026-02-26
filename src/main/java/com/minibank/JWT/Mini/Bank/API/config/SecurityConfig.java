@@ -35,7 +35,7 @@ public class SecurityConfig {
         return provider;
     }
 
-
+//This is where all endpoints are defined
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            DaoAuthenticationProvider provider) throws Exception {
@@ -55,12 +55,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-
+// This exposes Spring’s internal authentication manager as a bean.
+//You use it inside login service without it login wont work
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception{
         return authenticationConfiguration.getAuthenticationManager();
     }
+    //Defines how passwords are hashed.
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

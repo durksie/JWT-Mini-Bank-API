@@ -31,7 +31,7 @@ public class AccountController {
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
         }
     }
-
+//To Deposit Money
     @PostMapping("/deposit")
     public ResponseEntity<?>deposit(@RequestParam BigDecimal amount){
         try{
@@ -41,7 +41,7 @@ public class AccountController {
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
-
+//To withdraw money
     @PostMapping("/withdraw")
     public ResponseEntity<?>withdraw(@RequestParam BigDecimal amount){
         try{
@@ -51,7 +51,7 @@ public class AccountController {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
-
+//To get a transaction history of a user
     @GetMapping("/transactions")
     public ResponseEntity<List<TransactionDto>>getTransactions(){
         List<TransactionDto> transactionDtos= transactionService.getUserTransaction();

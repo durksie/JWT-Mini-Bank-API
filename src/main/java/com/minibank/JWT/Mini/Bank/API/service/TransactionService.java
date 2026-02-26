@@ -25,7 +25,7 @@ public class TransactionService {
 
     @Autowired
     private UserRepository userRepository;
-
+//To get the statement or transaction history of a user
     public List<TransactionDto> getUserTransaction(){
         UserEntity userEntity= getCurrentUser();
 
@@ -39,7 +39,7 @@ public class TransactionService {
                 .map(TransactionDto::fromEntity)
                 .collect(Collectors.toList());
     }
-
+//To get the current user
     private UserEntity getCurrentUser(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();

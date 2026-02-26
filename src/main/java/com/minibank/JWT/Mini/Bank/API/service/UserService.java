@@ -35,10 +35,10 @@ public class UserService {
 
     @Autowired
     private JwtGenerator jwtGenerator;
-
+     // To register a new user
     @Transactional
     public String register(RegisterDto registerDto){
-
+        //shows what the system is running
         logger.info("Registering new user: {}", registerDto.getUsername());
 
         if (userRepository.existsByUsername(registerDto.getUsername())){
@@ -46,7 +46,7 @@ public class UserService {
             throw new RuntimeException("Username already exists");
         }
 
-        // Parse account type
+        // Parse account type or validates account type
         AccountType accountType;
         try {
             accountType = AccountType.fromDisplayName(registerDto.getAccountType());
@@ -58,20 +58,20 @@ public class UserService {
             );
         }
 
-        // Create user
+        // Create a user
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(registerDto.getUsername());
         userEntity.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         userEntity.setRole("ROLE_USER");
 
-        // Create account
+        // Create an account
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setAccountType(accountType);
         accountEntity.setUser(userEntity);
 
-        // If using OneToOne
+        // assign a user an account
         userEntity.setAccount(accountEntity);
-
+        //then saves the information to the database
         userRepository.save(userEntity);
 
         logger.info("User registered successfully: {}", registerDto.getUsername());
@@ -84,7 +84,7 @@ public class UserService {
                 + " | Account Number: "
                 + accountEntity.getAccountNumber();
     }
-
+//To login a user
     public JwtResponseDto login(LoginDto loginDto){
         logger.info("Processing login for user: {}", loginDto.getUsername());
 

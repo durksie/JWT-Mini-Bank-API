@@ -29,7 +29,7 @@ public class AccountService {
     private final TransactionRepository transactionRepository;
 
 
-    // ================= GET ACCOUNT =================
+    //  GET ACCOUNT
 
     public AccountDto getAccountDetails() {
 
@@ -46,8 +46,7 @@ public class AccountService {
     }
 
 
-    // ================= DEPOSIT =================
-
+    //  DEPOSIT
     @Transactional
     public AccountDto deposit(BigDecimal amount){
 
@@ -84,8 +83,7 @@ public class AccountService {
     }
 
 
-    // ================= WITHDRAW =================
-
+    //  WITHDRAW
     @Transactional
     public AccountDto withdraw(BigDecimal amount){
 
@@ -124,10 +122,7 @@ public class AccountService {
         return mapToDto(account);
     }
 
-
-
-    // ================= HELPERS =================
-
+    //HELPERS
     private void saveTransaction(AccountEntity account,
                                  BigDecimal amount,
                                  TransactionEntity.TransactionType type,

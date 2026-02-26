@@ -29,7 +29,7 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    // ================= GET ACCOUNT TYPES =================
+    //  To Get Available ACCOUNT TYPES
     @GetMapping("/account-types")
     public ResponseEntity<List<Map<String, Object>>> getAccountTypes() {
         List<Map<String, Object>> accountTypes = Arrays.stream(AccountType.values())
@@ -46,7 +46,7 @@ public class AuthController {
         return ResponseEntity.ok(accountTypes);
     }
 
-    // ================= REGISTER =================
+    //  Register a user and an account
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@Validated @RequestBody RegisterDto registerDto) {
         logger.info("Registration attempt for username: {} with account type: {}",
@@ -64,7 +64,7 @@ public class AuthController {
         }
     }
 
-    // ================= LOGIN =================
+    // To Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginDto loginDto) {
         logger.info("Login attempt for username: {}", loginDto.getUsername());
