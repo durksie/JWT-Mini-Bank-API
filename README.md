@@ -5,6 +5,39 @@ The **Bank Account Management API** is a Spring Boot REST application that simul
 
 This project simulates real-world banking operations with multiple account types, secure authentication, and transaction management. Perfect for learning Spring Security, JWT implementation, and RESTful API design.
 
+## 📂 Project Structure
+
+```
+src/main/java/com/bankapp/
+├── 🎮 controller/             # REST Endpoints for Auth and Banking
+│   ├── AuthController.java
+│   └── AccountController.java
+├── ⚙️ service/                # Business logic and validation
+│   ├── UserService.java
+│   ├── AccountService.java
+│   └── TransactionService.java
+├── 📦 repository/             # Spring Data JPA repositories
+│   ├── UserRepository.java
+│   ├── AccountRepository.java
+│   └── TransactionRepository.java
+├── 📑 model/                  # JPA Entities (User, Account, Transaction)
+│   ├── User.java
+│   ├── Account.java
+│   ├── Transaction.java
+│   └── AccountType.java
+├── ✉️ dto/                    # Data Transfer Objects for API requests
+│   ├── LoginDto.java
+│   ├── RegisterDto.java
+│   ├── AccountDto.java
+│   ├── TransactionDto.java
+│   └── JwtResponseDto.java
+├── 🔐 security/               # JWT & Security implementation
+│   ├── JwtGenerator.java
+│   ├── JwtFilter.java
+│   └── CustomUserDetailsService.java
+└── 🛠️ config/                 # Global configurations
+    └── SecurityConfig.java
+```
 
 ##  Features
 
@@ -51,83 +84,167 @@ Before running the application, ensure you have the following installed:
 * **MySQL Server**
 * An IDE (IntelliJ IDEA recommended)
 
-```bash
 # Check your environment
 java --version
 mvn --version
 mysql --version
 
+# 🛠️ Installation Steps
+## 1. Clone the Repository
+Open your terminal and clone the project to your local machine:
+
+```
+git clone https://github.com/yourusername/mini-banking-api.git
+cd mini-banking-api
+```
+## 2. Configure MySQL Database
+Ensure your MySQL server is running, then create the database:
+```
+CREATE DATABASE minibank;
+```
+## 3. Update Application Properties
+Navigate to the resources folder and update your database credentials:
+
+```
+# Edit src/main/resources/application.properties
+spring.datasource.username=your_mysql_username
+spring.datasource.password=your_mysql_password
+```
+
+## 4. Build the Project
+Use Maven to download dependencies and build the executable JAR:
+```
+mvn clean install
+```
+
+## 5. Run the Application
+Start the Spring Boot application:
+```
+mvn spring-boot:run
+```
+[!NOTE]
+The application will be accessible at``` http://localhost:8080```
 
 
-Dependencies (pom.xml)Include these in your dependencies section. Note: Use Spring Boot 3.x to avoid the "unresolved dependency" error.XML<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
+# API Documentation
+Authentication Endpoints
+1. Get Available Account Types
+   ```GET /api/auth/account-types```
 
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
+## json Response
+```
+ {
+    "name": "EASY",
+    "displayName": "Easy Account",
+    "minimumBalance": 0.0,
+    "maximumBalance": 10000.0
+  },
+  {
+    "name": "PREMIER",
+    "displayName": "Premier Account",
+    "minimumBalance": 10000.0,
+    "maximumBalance": 200000.0
+  }
+```
 
-    <dependency>
-        <groupId>org.springframework.boot</groupId>        
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
+2. Register New User
+```
+POST /api/auth/register
+Content-Type: application/json
 
-    <dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
-        <scope>runtime</scope>
-    </dependency>
+{
+    "username": "john_doe",
+    "password": "password123",
+    "accountType": "Premier Account"
+}
+```
+## Response
+```
+{
+    "message": "User registered successfully! Account Type: Premier Account, Account Number: PRM1709234567123"
+}
+```
+3. Login
+```
+POST /api/auth/login
+Content-Type: application/json
 
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-api</artifactId>
-        <version>0.11.5</version>
-    </dependency>
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-impl</artifactId>
-        <version>0.11.5</version>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-jackson</artifactId>
-        <version>0.11.5</version>
-        <scope>runtime</scope>
-    </dependency>
+{
+    "username": "john_doe",
+    "password": "password123"
+}
+```
+## Response
+```
+{
+    "token": "eyJhbGciOiJIUzUxMiJ9...",
+    "type": "Bearer",
+    "username": "john_doe"
+}
+```
 
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <optional>true</optional>
-    </dependency>
-</dependencies>
-
-
-Database SetupLog in to your MySQL terminal:SQLmysql -u root -p
-Create the project database:SQLCREATE DATABASE bankdb;
-Application ConfigurationUpdate src/main/resources/application.properties with your credentials:Propertiesspring.datasource.url=jdbc:mysql://localhost:3306/bankdb
-spring.datasource.username=root
-spring.datasource.password=your_password
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-
-# JWT Configuration (Minimum 64 characters for HS512)
-jwt.secret=your_64_character_long_super_secret_key_make_it_very_long_and_secure
-jwt.expiration=86400000
-API Endpoints1. Authentication EndpointsEndpointMethodBodyDescription/api/auth/registerPOST{ "username": "user", "password": "pass" }Register a new user/api/auth/loginPOST{ "username": "user", "password": "pass" }Login & receive JWT2. Account Endpoints (Protected)Requires Header: Authorization: Bearer <token>EndpointMethodBodyDescription/api/accountsPOST{ "accountNumber":"123", "balance":1000 }Create a new account/api/accountsGET—View all accounts/api/accounts/{id}GET—View account by ID/api/accounts/deposit/{id}POST{ "amount":500 }Deposit money/api/accounts/withdraw/{id}POST{ "amount":200 }Withdraw moneyProject StructurePlaintextsrc/main/java/com/example/bankapi
-│
-├── controller    # REST Controllers
-├── service       # Business Logic
-├── repository    # Data Access Layer (JPA)
-├── model         # Entities (User, Account)
-├── security      # JWT & Security Config
-└── dto           # Data Transfer Objects
-Running the ApplicationUsing Maven:Bashmvn spring-boot:run
-Expected Console Output:PlaintextTomcat started on port 8080
-Started BankApplication in 3.5 seconds
-Future Improvements[ ] Internal transfers between accounts.[ ] Full transaction history/audit logs.[ ] Refresh token implementation.[ ] Dockerization for easy deployment.[ ] Swagger/OpenAPI documentation.
+# Protected Endpoints (Require JWT Token)
+Include in Header:``` Authorization:``` ```Bearer <your-token>```
+4. Get Account Details
+GET /api/account
+## Response
+```
+{
+    "id": 1,
+    "accountNumber": "PRM1709234567123",
+    "balance": 15000.00,
+    "username": "john_doe",
+    "accountType": "PREMIER",
+    "accountTypeDisplayName": "Premier Account",
+    "minimumBalance": 10000.0,
+    "maximumBalance": 200000.0
+}
+```
+5. Deposit Money
+   POST /api/account/deposit?amount=5000
+   ## Response
+   ```
+   {
+    "id": 1,
+    "accountNumber": "PRM1709234567123",
+    "balance": 20000.00,
+    "username": "john_doe",
+    "accountType": "PREMIER",
+    "accountTypeDisplayName": "Premier Account",
+    "minimumBalance": 10000.0,
+    "maximumBalance": 200000.0
+}
+```
+6. Withdraw Money
+POST /api/account/withdraw?amount=3000
+```
+{
+    "id": 1,
+    "accountNumber": "PRM1709234567123",
+    "balance": 17000.00,
+    "username": "john_doe",
+    "accountType": "PREMIER",
+    "accountTypeDisplayName": "Premier Account",
+    "minimumBalance": 10000.0,
+    "maximumBalance": 200000.0
+}
+```
+7. View Transaction History
+GET /api/account/transactions
+## Response
+```
+{
+        "id": 1,
+        "amount": 5000.00,
+        "type": "DEPOSIT",
+        "description": "Deposit to Premier Account",
+        "transactionDate": "2024-02-29T10:30:00"
+    },
+    {
+        "id": 2,
+        "amount": 3000.00,
+        "type": "WITHDRAWAL",
+        "description": "Withdrawal from Premier Account",
+        "transactionDate": "2024-02-29T10:35:00"
+    }
+```
