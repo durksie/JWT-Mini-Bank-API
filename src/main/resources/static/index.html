@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Durksie | Banking API Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* Professional Color Palette - Inspired by FNB */
+        :root {
+            --primary-dark: #002B4A;      /* Deep Navy */
+            --primary: #003E6B;           /* Navy Blue */
+            --primary-light: #1A5680;      /* Lighter Navy */
+            --accent: #C8A86B;             /* Gold */
+            --accent-light: #D8BC8C;        /* Light Gold */
+            --accent-dark: #A8894A;         /* Dark Gold */
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-600: #475569;
+            --gray-800: #1E293B;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--primary-dark);
+            height: 6px;
+            width: 100%;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 4px 20px rgba(0, 59, 106, 0.08);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--accent);
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0, 59, 106, 0.2);
+        }
+
+        .logo-text h1 {
+            color: var(--primary-dark);
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            color: var(--gray-400);
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .badge {
+            background: var(--accent-light);
+            color: var(--primary-dark);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .profile-circle {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 18px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 24px;
+            padding: 36px 48px;
+            margin-bottom: 30px;
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 20px 30px -10px rgba(0, 59, 106, 0.3);
+        }
+
+        .hero-text h2 {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .hero-text h2 strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .hero-text p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Status Card */
+        .status-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            border: 1px solid var(--gray-200);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            transition: all 0.3s;
+        }
+
+        .dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .dot.disconnected {
+            background: var(--danger);
+        }
+
+        .status-text {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .url-badge {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 40px;
+            padding: 8px 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .test-btn {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Token Section */
+        .token-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 24px 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+        }
+
+        .token-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .token-header h3 {
+            color: var(--primary-dark);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .token-badge {
+            background: var(--accent-light);
+            color: var(--primary-dark);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .token-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .token-wrapper input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Courier New', monospace;
+            background: var(--gray-50);
+            transition: all 0.3s;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .token-wrapper input:focus {
+            border-color: var(--accent);
+            outline: none;
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(200, 168, 107, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 59, 106, 0.2);
+        }
+
+        .btn-outline {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--white);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            border: 1px solid var(--gray-200);
+            height: fit-content;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .sidebar-header h2 {
+            color: var(--primary-dark);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .count-badge {
+            background: var(--accent-light);
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .group {
+            margin-bottom: 25px;
+        }
+
+        .group-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-400);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .endpoint-btn {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 12px;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid transparent;
+        }
+
+        .endpoint-btn:hover {
+            background: var(--gray-100);
+            transform: translateX(4px);
+        }
+
+        .endpoint-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-left-color: var(--accent);
+            box-shadow: 0 8px 16px rgba(0, 59, 106, 0.15);
+        }
+
+        .method-badge {
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method-badge.get { background: #E0F2FE; color: #0369A1; }
+        .method-badge.post { background: #DCFCE7; color: #166534; }
+        .method-badge.put { background: #FEF9C3; color: #854D0E; }
+        .method-badge.delete { background: #FEE2E2; color: #991B1B; }
+
+        .endpoint-btn.active .method-badge {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+        }
+
+        /* Request Panel */
+        .request-panel {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            border: 1px solid var(--gray-200);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .panel-header h2 {
+            color: var(--primary-dark);
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .method-tag {
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .method-tag.get { background: #E0F2FE; color: #0369A1; }
+        .method-tag.post { background: #DCFCE7; color: #166534; }
+
+        /* Protected Token Card */
+        .token-card {
+            background: #FEF9E7;
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .token-card label {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .token-flex {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .token-flex input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid var(--accent-light);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            background: var(--white);
+        }
+
+        .gold-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gold-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 59, 106, 0.2);
+        }
+
+        .preview-box {
+            background: #E8F0FE;
+            border: 1px solid var(--primary-light);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .preview-box strong {
+            color: var(--primary);
+        }
+
+        /* Form Elements */
+        .form-card {
+            background: var(--gray-50);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray-800);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(200, 168, 107, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: #E8F0FE;
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: var(--primary-dark);
+        }
+
+        .info-box.warning {
+            background: #FEF3E2;
+            border-left-color: var(--warning);
+            color: #92400E;
+        }
+
+        .info-box.success {
+            background: #E3F7EC;
+            border-left-color: var(--success);
+            color: #065F46;
+        }
+
+        /* Account Cards */
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .account-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--gray-50) 100%);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .account-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(200, 168, 107, 0.15);
+        }
+
+        .account-card.selected {
+            background: var(--primary);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .account-card h4 {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .account-card small {
+            opacity: 0.8;
+            font-size: 12px;
+        }
+
+        /* Send Button */
+        .execute-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 25px 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid var(--accent);
+        }
+
+        .execute-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 59, 106, 0.25);
+        }
+
+        .execute-btn:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+            border-color: var(--gray-300);
+        }
+
+        /* Response Section */
+        .response-section {
+            background: #1E293B;
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+            border: 1px solid var(--accent);
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .response-header h3 {
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .response-badge {
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .response-badge.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .response-badge.error {
+            background: var(--danger);
+            color: white;
+        }
+
+        .response-body {
+            background: #0F172A;
+            border-radius: 12px;
+            padding: 20px;
+            color: #E2E8F0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-dark);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 12px;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 12px 24px rgba(0, 59, 106, 0.25);
+            border-left: 4px solid var(--accent);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px solid var(--gray-200);
+            color: var(--gray-400);
+            font-size: 14px;
+        }
+
+        .footer .brand {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .footer .brand span {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Top Bar -->
+<div class="top-bar"></div>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="logo-area">
+        <div class="logo-icon">D</div>
+        <div class="logo-text">
+            <h1>Durksie</h1>
+            <p>Banking API Console</p>
+        </div>
+    </div>
+    <div class="badge">⚡ Sandbox Environment</div>
+    <div class="profile-circle">D</div>
+</nav>
+
+<!-- Main Container -->
+<div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+        <div class="hero-text">
+            <h2>Welcome to <strong>Durksie</strong></h2>
+            <p>Professional banking API test console - Built by Durksie</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-value">9</div>
+                <div class="stat-label">Endpoints</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">⚡</div>
+                <div class="stat-label">Live</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="status-card">
+        <div class="status-left">
+            <div class="indicator">
+                <span class="dot" id="connectionDot"></span>
+                <span class="status-text" id="connectionText">Checking connection...</span>
+            </div>
+            <div class="url-badge" id="baseUrlDisplay">http://localhost:8080</div>
+        </div>
+        <button class="test-btn" onclick="testConnection()">
+            <span>🔄</span> Test Connection
+        </button>
+    </div>
+
+    <!-- Global Token Section -->
+    <div class="token-section">
+        <div class="token-header">
+            <h3>Global Access Token</h3>
+            <span class="token-badge">JWT • Bearer</span>
+        </div>
+        <div class="token-wrapper">
+            <input type="text" id="globalJwtToken" placeholder="eyJhbGciOiJIUzUxMiJ9..." value="">
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="copyGlobalToken()">📋 Copy</button>
+                <button class="btn btn-outline" onclick="useGlobalTokenInCurrent()">🔑 Use in Current</button>
+                <button class="btn btn-danger" onclick="clearGlobalToken()">🗑️ Clear</button>
+            </div>
+        </div>
+        <small style="color: var(--gray-400); margin-top: 12px; display: block;">
+            Token auto-fills after login. Click "Use in Current" for protected endpoints.
+        </small>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>API Endpoints</h2>
+                <span class="count-badge">9 total</span>
+            </div>
+
+            <div class="group">
+                <div class="group-title">
+                    <span>🔓</span> Public (No Auth)
+                </div>
+                <button class="endpoint-btn" onclick="selectEndpoint('account-types')">
+                    <span class="method-badge get">GET</span>
+                    Get Account Types
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('register')">
+                    <span class="method-badge post">POST</span>
+                    Register
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('login')">
+                    <span class="method-badge post">POST</span>
+                    Login
+                </button>
+            </div>
+
+            <div class="group">
+                <div class="group-title">
+                    <span>🔒</span> Protected (Bearer Token)
+                </div>
+                <button class="endpoint-btn" onclick="selectEndpoint('account-details')">
+                    <span class="method-badge get">GET</span>
+                    Account Details
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('deposit')">
+                    <span class="method-badge post">POST</span>
+                    Deposit
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('withdraw')">
+                    <span class="method-badge post">POST</span>
+                    Withdraw
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('verify-account')">
+                    <span class="method-badge get">GET</span>
+                    Verify Account
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('transfer')">
+                    <span class="method-badge post">POST</span>
+                    Transfer
+                </button>
+                <button class="endpoint-btn" onclick="selectEndpoint('transactions')">
+                    <span class="method-badge get">GET</span>
+                    Transactions
+                </button>
+            </div>
+        </div>
+
+        <!-- Request Panel -->
+        <div class="request-panel" id="requestPanel">
+            <div class="panel-header">
+                <h2 id="endpointTitle">Select an endpoint</h2>
+                <span class="method-tag" id="methodBadge"></span>
+            </div>
+
+            <!-- Dynamic Form -->
+            <div id="dynamicForm"></div>
+
+            <!-- Execute Button -->
+            <button class="execute-btn" onclick="sendRequest()" id="sendBtn">
+                <span id="btnText">Execute Request</span>
+                <span id="btnSpinner" class="spinner" style="display: none;"></span>
+            </button>
+
+            <!-- Response Section -->
+            <div class="response-section" id="responseSection" style="display: none;">
+                <div class="response-header">
+                    <h3>📥 Response</h3>
+                    <span class="response-badge" id="responseStatus"></span>
+                </div>
+                <div class="response-body" id="responseBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="brand"><span>Durksie</span></div>
+        <p>Banking API Console v1.0 • Sandbox Environment</p>
+        <p style="margin-top: 10px; font-size: 12px;">© 2026 Durksie - Professional Banking API Interface</p>
+    </div>
+</div>
+
+<script>
+    // Base URL
+    const BASE_URL = 'http://localhost:8080';
+    let currentEndpoint = null;
+    const PROTECTED_ENDPOINTS = ['account-details', 'deposit', 'withdraw', 'verify-account', 'transfer', 'transactions'];
+
+    // Test connection on load
+    document.addEventListener('DOMContentLoaded', () => {
+        testConnection();
+        setTimeout(() => {
+            document.querySelector('.endpoint-btn').click();
+        }, 100);
+    });
+
+    // Test connection
+    async function testConnection() {
+        const dot = document.getElementById('connectionDot');
+        const text = document.getElementById('connectionText');
+
+        dot.className = 'dot';
+        text.textContent = 'Testing connection...';
+
+        try {
+            const response = await fetch(`${BASE_URL}/api/auth/account-types`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors'
+            });
+
+            if (response.ok) {
+                dot.className = 'dot connected';
+                text.textContent = 'Connected to server';
+            } else {
+                dot.className = 'dot disconnected';
+                text.textContent = 'Server error';
+            }
+        } catch (error) {
+            dot.className = 'dot disconnected';
+            text.textContent = 'Cannot connect to server';
+        }
+    }
+
+    // Select endpoint
+    function selectEndpoint(endpoint) {
+        currentEndpoint = endpoint;
+
+        document.querySelectorAll('.endpoint-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+
+        updateForm(endpoint);
+    }
+
+    // Update form
+    function updateForm(endpoint) {
+        const formContainer = document.getElementById('dynamicForm');
+        const methodBadge = document.getElementById('methodBadge');
+        const endpointTitle = document.getElementById('endpointTitle');
+
+        let html = '';
+        let method = 'GET';
+        let title = '';
+
+        const isProtected = PROTECTED_ENDPOINTS.includes(endpoint);
+
+        // Add protected token field
+        if (isProtected) {
+            html += `
+                <div class="token-card">
+                    <label>🔑 Bearer Token (Required)</label>
+                    <div class="token-flex">
+                        <input type="text" id="endpointToken" placeholder="Enter your JWT token" value="">
+                        <button class="gold-btn" onclick="useGlobalTokenInCurrent()" type="button">
+                            <span>📋</span> Use Global
+                        </button>
+                    </div>
+                    <div class="preview-box" id="authHeaderPreview">
+                        <strong>Authorization:</strong> Bearer <span id="tokenPreview">[token will appear here]</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Endpoint specific forms (keeping your exact logic)
+        switch(endpoint) {
+            case 'account-types':
+                title = 'Get Account Types';
+                method = 'GET';
+                html += `
+                    <div class="info-box">
+                        <strong>📍 GET /api/auth/account-types</strong><br>
+                        Returns all available account types with their minimum and maximum balance limits.
+                    </div>
+                `;
+                break;
+
+            case 'register':
+                title = 'Register New User';
+                method = 'POST';
+                html += `
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Username *</label>
+                            <input type="text" id="regUsername" value="testuser_${Date.now()}">
+                        </div>
+                        <div class="form-group">
+                            <label>Password *</label>
+                            <input type="password" id="regPassword" value="password123">
+                        </div>
+                        <div class="form-group">
+                            <label>Account Type *</label>
+                            <select id="regAccountType">
+                                <option value="Easy Account">Easy Account ($0 - $10,000)</option>
+                                <option value="Aspire Account">Aspire Account ($1,000 - $50,000)</option>
+                                <option value="Premier Account">Premier Account ($10,000 - $200,000)</option>
+                                <option value="Private Clients Account">Private Clients Account ($50,000 - $500,000)</option>
+                                <option value="Private Wealth Account">Private Wealth Account ($200,000+)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="account-grid">
+                        <div class="account-card" onclick="selectAccountType('Easy Account')">
+                            <h4>Easy Account</h4>
+                            <small>$0 - $10,000</small>
+                        </div>
+                        <div class="account-card" onclick="selectAccountType('Aspire Account')">
+                            <h4>Aspire Account</h4>
+                            <small>$1,000 - $50,000</small>
+                        </div>
+                        <div class="account-card" onclick="selectAccountType('Premier Account')">
+                            <h4>Premier Account</h4>
+                            <small>$10,000 - $200,000</small>
+                        </div>
+                        <div class="account-card" onclick="selectAccountType('Private Clients Account')">
+                            <h4>Private Clients</h4>
+                            <small>$50,000 - $500,000</small>
+                        </div>
+                        <div class="account-card" onclick="selectAccountType('Private Wealth Account')">
+                            <h4>Private Wealth</h4>
+                            <small>$200,000+</small>
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'login':
+                title = 'Login';
+                method = 'POST';
+                html += `
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Username *</label>
+                            <input type="text" id="loginUsername" placeholder="Enter your username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password *</label>
+                            <input type="password" id="loginPassword" placeholder="Enter your password">
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'account-details':
+                title = 'Get Account Details';
+                method = 'GET';
+                html += `
+                    <div class="info-box">
+                        <strong>📍 GET /api/account</strong><br>
+                        Returns your account details including balance and account type.
+                    </div>
+                `;
+                break;
+
+            case 'deposit':
+                title = 'Deposit Money';
+                method = 'POST';
+                html += `
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Amount *</label>
+                            <input type="number" id="depositAmount" placeholder="Enter amount" min="0.01" step="0.01">
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'withdraw':
+                title = 'Withdraw Money';
+                method = 'POST';
+                html += `
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Amount *</label>
+                            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="0.01" step="0.01">
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'verify-account':
+                title = 'Verify Account';
+                method = 'GET';
+                html += `
+                    <div class="info-box warning">
+                        <strong>⚠️ Step 1 of Transfer Process</strong><br>
+                        Verify destination account exists before transferring.
+                    </div>
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Account Number *</label>
+                            <input type="text" id="verifyAccountNumber" placeholder="Enter account number to verify">
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'transfer':
+                title = 'Transfer Money';
+                method = 'POST';
+                html += `
+                    <div class="info-box warning">
+                        <strong>⚠️ Step 2 of Transfer Process</strong><br>
+                        Only proceed after verifying the account.
+                    </div>
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Destination Account *</label>
+                            <input type="text" id="transferDestAccount" placeholder="Enter verified account number">
+                        </div>
+                        <div class="form-group">
+                            <label>Recipient Name *</label>
+                            <input type="text" id="transferRecipient" placeholder="Enter recipient name">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount *</label>
+                            <input type="number" id="transferAmount" placeholder="Enter amount" min="0.01" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" id="transferDescription" placeholder="Payment for...">
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'transactions':
+                title = 'View Transactions';
+                method = 'GET';
+                html += `
+                    <div class="info-box">
+                        <strong>📍 GET /api/account/transactions</strong><br>
+                        Returns all transactions for your account.
+                    </div>
+                `;
+                break;
+        }
+
+        formContainer.innerHTML = html;
+        methodBadge.textContent = method;
+        methodBadge.className = `method-tag ${method.toLowerCase()}`;
+        endpointTitle.textContent = title;
+
+        if (isProtected) {
+            const tokenInput = document.getElementById('endpointToken');
+            if (tokenInput) {
+                tokenInput.addEventListener('input', updateAuthHeaderPreview);
+                setTimeout(updateAuthHeaderPreview, 100);
+            }
+        }
+    }
+
+    // Update auth header preview
+    function updateAuthHeaderPreview() {
+        const tokenInput = document.getElementById('endpointToken');
+        const tokenPreview = document.getElementById('tokenPreview');
+
+        if (tokenInput && tokenPreview) {
+            const token = tokenInput.value;
+            if (token && token.length > 10) {
+                const previewToken = token.length > 30 ?
+                    token.substring(0, 20) + '...' + token.substring(token.length - 10) :
+                    token;
+                tokenPreview.textContent = previewToken;
+                tokenPreview.style.color = '#10B981';
+            } else {
+                tokenPreview.textContent = '[no token]';
+                tokenPreview.style.color = '#EF4444';
+            }
+        }
+    }
+
+    // Select Account Type
+    function selectAccountType(type) {
+        const select = document.getElementById('regAccountType');
+        if (select) {
+            select.value = type;
+        }
+
+        document.querySelectorAll('.account-card').forEach(card => {
+            card.classList.remove('selected');
+            if (card.textContent.includes(type)) {
+                card.classList.add('selected');
+            }
+        });
+    }
+
+    // Use global token in current endpoint
+    function useGlobalTokenInCurrent() {
+        const globalToken = document.getElementById('globalJwtToken').value;
+        const endpointToken = document.getElementById('endpointToken');
+        if (endpointToken) {
+            endpointToken.value = globalToken;
+            updateAuthHeaderPreview();
+            showToast('Global token applied to current request');
+        }
+    }
+
+    // Send request (keeping your exact logic)
+    async function sendRequest() {
+        if (!currentEndpoint) {
+            showToast('Please select an endpoint');
+            return;
+        }
+
+        const sendBtn = document.getElementById('sendBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        btnText.textContent = 'Executing...';
+        btnSpinner.style.display = 'inline-block';
+        sendBtn.disabled = true;
+
+        try {
+            let url = BASE_URL;
+            let method = 'GET';
+            let body = null;
+            let headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+
+            const isProtected = PROTECTED_ENDPOINTS.includes(currentEndpoint);
+            if (isProtected) {
+                const token = document.getElementById('endpointToken')?.value;
+                if (!token) {
+                    throw new Error('Token required. Use global token or paste your token.');
+                }
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            // Build URL based on endpoint (your exact logic)
+            switch(currentEndpoint) {
+                case 'account-types':
+                    url += '/api/auth/account-types';
+                    break;
+                case 'register':
+                    url += '/api/auth/register';
+                    method = 'POST';
+                    body = {
+                        username: document.getElementById('regUsername').value,
+                        password: document.getElementById('regPassword').value,
+                        accountType: document.getElementById('regAccountType').value
+                    };
+                    break;
+                case 'login':
+                    url += '/api/auth/login';
+                    method = 'POST';
+                    body = {
+                        username: document.getElementById('loginUsername').value,
+                        password: document.getElementById('loginPassword').value
+                    };
+                    break;
+                case 'account-details':
+                    url += '/api/account';
+                    break;
+                case 'deposit':
+                    const depositAmount = document.getElementById('depositAmount').value;
+                    if (!depositAmount) throw new Error('Enter amount');
+                    url += `/api/account/deposit?amount=${depositAmount}`;
+                    method = 'POST';
+                    break;
+                case 'withdraw':
+                    const withdrawAmount = document.getElementById('withdrawAmount').value;
+                    if (!withdrawAmount) throw new Error('Enter amount');
+                    url += `/api/account/withdraw?amount=${withdrawAmount}`;
+                    method = 'POST';
+                    break;
+                case 'verify-account':
+                    const verifyAccount = document.getElementById('verifyAccountNumber').value;
+                    if (!verifyAccount) throw new Error('Enter account number');
+                    url += `/api/account/verify-account?accountNumber=${verifyAccount}`;
+                    break;
+                case 'transfer':
+                    url += '/api/account/transfer';
+                    method = 'POST';
+                    body = {
+                        destinationAccountNumber: document.getElementById('transferDestAccount').value,
+                        recipientName: document.getElementById('transferRecipient').value,
+                        amount: parseFloat(document.getElementById('transferAmount').value),
+                        description: document.getElementById('transferDescription').value || 'Transfer'
+                    };
+                    break;
+                case 'transactions':
+                    url += '/api/account/transactions';
+                    break;
+            }
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch(url, {
+                method: method,
+                headers: headers,
+                body: body ? JSON.stringify(body) : null,
+                mode: 'cors',
+                signal: controller.signal
+            }).finally(() => clearTimeout(timeoutId));
+
+            const responseData = await response.text();
+            let jsonData;
+            try {
+                jsonData = JSON.parse(responseData);
+            } catch {
+                jsonData = responseData;
+            }
+
+            const formattedResponse = typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData, null, 2);
+
+            document.getElementById('responseSection').style.display = 'block';
+            document.getElementById('responseBody').textContent = formattedResponse;
+
+            const statusElement = document.getElementById('responseStatus');
+            statusElement.textContent = `${response.status} ${response.statusText}`;
+            statusElement.className = `response-badge ${response.ok ? 'success' : 'error'}`;
+
+            if (currentEndpoint === 'login' && response.ok && jsonData.token) {
+                document.getElementById('globalJwtToken').value = jsonData.token;
+                showToast('Token saved to global storage');
+            }
+
+        } catch (error) {
+            document.getElementById('responseSection').style.display = 'block';
+            document.getElementById('responseBody').textContent = error.message;
+            document.getElementById('responseStatus').textContent = 'Error';
+            document.getElementById('responseStatus').className = 'response-badge error';
+        } finally {
+            btnText.textContent = 'Execute Request';
+            btnSpinner.style.display = 'none';
+            sendBtn.disabled = false;
+        }
+    }
+
+    // Copy global token
+    function copyGlobalToken() {
+        const tokenInput = document.getElementById('globalJwtToken');
+        tokenInput.select();
+        document.execCommand('copy');
+        showToast('Token copied to clipboard');
+    }
+
+    // Clear global token
+    function clearGlobalToken() {
+        document.getElementById('globalJwtToken').value = '';
+        showToast('Token cleared');
+    }
+
+    // Show toast
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
+</body>
+</html>

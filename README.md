@@ -233,6 +233,7 @@ POST /api/account/withdraw?amount=3000
 GET- http://localhost:8080/api/account/transactions
 ## Response
 ```
+``````
 {
         "id": 1,
         "amount": 5000.00,
@@ -247,4 +248,92 @@ GET- http://localhost:8080/api/account/transactions
         "description": "Withdrawal from Premier Account",
         "transactionDate": "2024-02-29T10:35:00"
     }
-```
+``````
+
+#   To transfer money from one account to the other
+8. Step 1: Verify Account First
+
+````
+GET /api/account/verify-account?accountNumber=PRM1709234567890
+Authorization: Bearer <your-token>
+````
+Success Response:
+
+json
+````
+{
+    "valid": true,
+    "accountNumber": "PRM1709234567890",
+    "accountHolderName": "jane_doe",
+    "accountType": "Premier Account"
+}
+````
+Error Response:
+
+json
+````
+{
+    "valid": false,
+    "error": "Destination account not found"
+}
+````
+
+9. Step 2: Only Then Execute Transfer
+````
+POST /api/account/transfer
+Authorization: Bearer <your-token>
+Content-Type: application/json
+````
+````
+
+{
+    "destinationAccountNumber": "PRM1709234567890",
+    "recipientName": "jane_doe",
+    "amount": 500.00,
+    "description": "Payment for dinner"
+}
+````
+Success Response:
+
+json
+````
+{
+    "message": "Transfer completed successfully",
+    "amount": 500.00,
+    "recipient": "jane_doe",
+    "destinationAccount": "PRM1709234567890",
+    "sourceAccount": "EASY1234567890",
+    "status": "COMPLETED",
+    "newBalance": 1500.00
+}
+````
+## Why This 2-Step Process is Better
+* User Experience: User sees account details before confirming transfer
+
+* Error Prevention: Catches typos in account numbers early
+
+* Security: Confirms recipient name matches account
+
+* Transaction Safety: Verification doesn't modify data, transfer does
+
+* Audit Trail: Can track verification attempts separately
+ 
+# Future Enhancements .
+### Alternative: One-Step with Combined Endpoint
+If you want a simpler flow for testing, use:
+````
+POST /api/account/transfer-with-verification
+Authorization: Bearer <your-token>
+Content-Type: application/json
+````
+````
+
+{
+    "destinationAccountNumber": "PRM1709234567890",
+    "recipientName": "jane_doe",
+    "amount": 500.00
+}
+````
+This verifies AND transfers in one call, but the 2-step process is more secure and provides better user experience for production applications.
+
+
