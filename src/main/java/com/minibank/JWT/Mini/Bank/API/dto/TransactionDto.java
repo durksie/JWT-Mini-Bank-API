@@ -18,13 +18,21 @@ public class TransactionDto {
     private String description;
     private LocalDateTime transactionDate;
 
+    //updates
+    private String sourceAccountNumber;
+    private String destinationAccountNumber;
+    private String recipientName;
+
     public static TransactionDto fromEntity(TransactionEntity transactionEntity){
         return new TransactionDto(
                 transactionEntity.getId(),
                 transactionEntity.getAmount(),
-                transactionEntity.getType().toString(), //converts Enum to String for the UI
+                transactionEntity.getType().toString(), // converts Enum to String for UI
                 transactionEntity.getDescription(),
-                transactionEntity.getTransactionDate()
+                transactionEntity.getTransactionDate(),
+                transactionEntity.getSourceAccountNumber(),
+                transactionEntity.getDestinationAccountNumber(),
+                transactionEntity.getRecipientName()
         );
     }
 }

@@ -35,6 +35,11 @@ public class TransactionEntity {
     @JoinColumn(name = "account_id",nullable = false)
     private AccountEntity account;
 
+    // New fields for transfers
+    private String sourceAccountNumber;
+    private String destinationAccountNumber;
+    private String recipientName;
+
     public enum TransactionType{
         DEPOSIT,WITHDRAWAL,TRANSFER
     }

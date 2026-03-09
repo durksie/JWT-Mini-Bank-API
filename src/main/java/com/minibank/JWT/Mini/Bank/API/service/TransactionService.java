@@ -39,6 +39,32 @@ public class TransactionService {
                 .map(TransactionDto::fromEntity)
                 .collect(Collectors.toList());
     }
+//To get sent Transfers
+    public List<TransactionDto> getSentTransfers() {
+        UserEntity user = getCurrentUser();
+        AccountEntity account = accountRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        List<TransactionEntity> transactions = transactionRepository
+                .findByAccountAndTypeOrderByTransactionDateDesc(account, TransactionEntity.TransactionType.TRANSFER);
+
+        return transactions.stream()
+                .map(TransactionDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+//To get recieved transfers
+    public List<TransactionDto> getReceivedTransfers() {
+        UserEntity user = getCurrentUser();
+        AccountEntity account = accountRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        List<TransactionEntity> transactions = transactionRepository
+                .findByAccountAndTypeOrderByTransactionDateDesc(account, TransactionEntity.TransactionType.TRANSFER);
+
+        return transactions.stream()
+                .map(TransactionDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 //To get the current user
     private UserEntity getCurrentUser(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
