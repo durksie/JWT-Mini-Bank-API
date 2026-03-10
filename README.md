@@ -334,6 +334,71 @@ Content-Type: application/json
     "amount": 500.00
 }
 ````
+
+
 This verifies AND transfers in one call, but the 2-step process is more secure and provides better user experience for production applications.
 
+# Running the SYSTEM USING HTML INDEX.HTML FILE
 
+The Mini Banking API comes with a professional HTML Index.html User Interface test dashboard that allows you to test all endpoints with a beautiful, banking-grade interface.
+
+## File Location
+The INDEX.HTML UI test FILE is located at:
+````
+src/main/resources/index.html
+```` 
+## Best Method to run the index.html dashboard 
+
+#### If you want to run the HTML file independently:
+
+* Ensure your Spring Boot API is running on port 8080
+
+* Go to resources and Open the HTML file directly in your intellij:
+
+* Right-click on index.html
+
+* Select "Open with" → Choose your browser
+
+* Or simply click inside the file it will show small icons to use to open the html file
+
+* The client will connect to http://localhost:8080 then run the html file on http://localhost:63342
+
+#  CORS Configuration
+
+The application is already configured to accept requests from common local development origins.
+
+#### How It Works
+The CORS configuration is already implemented in Security.Config.java and allows:
+
+* All HTTP methods (GET, POST, PUT, DELETE, OPTIONS, etc.)
+
+* All headers
+
+* Credentials (authorization headers)
+
+
+# This configuration is perfect for local development, allowing you to:
+
+* Run the HTML test client from your IDE (IntelliJ)
+
+Test with  Live Server
+
+* Open the HTML file directly in your browser
+
+### All while your Spring Boot API runs on port 8080
+
+#### No Additional Setup Required
+The CORS configuration is already in place - just:
+
+Start your Spring Boot application
+
+Open the HTML test client from any allowed origin
+
+# Start testing enjoy! 🚀
+
+```Built with love```
+
+## 👨‍💻 Author
+**Ntlemo Durksie** *Junior Software Engineer | Aspiring AI Engineer* *Specializing in Java, Spring Boot, and Secure API Development.*
+
+---

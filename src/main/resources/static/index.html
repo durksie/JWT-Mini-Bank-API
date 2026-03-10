@@ -17,7 +17,7 @@
             min-height: 100vh;
         }
 
-        /* Professional Color Palette - Inspired by FNB */
+        /* Professional Color Palette */
         :root {
             --primary-dark: #002B4A;      /* Deep Navy */
             --primary: #003E6B;           /* Navy Blue */
@@ -36,6 +36,210 @@
             --success: #10B981;
             --danger: #EF4444;
             --warning: #F59E0B;
+            --info: #3B82F6;
+        }
+
+        /* Loading Animation Keyframes */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes progress {
+            0% {
+                width: 0%;
+            }
+            20% {
+                width: 20%;
+            }
+            40% {
+                width: 40%;
+            }
+            60% {
+                width: 60%;
+            }
+            80% {
+                width: 80%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* Loading States */
+        .loading-shimmer {
+            background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-size: 800px 104px;
+            animation: shimmer 1.5s infinite linear;
+            position: relative;
+            border-radius: 8px;
+            min-height: 24px;
+        }
+
+        .loading-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 59, 106, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .loading-spinner-large {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 50%, var(--accent) 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.3) 50%,
+                rgba(255,255,255,0) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+
+        .step.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .step.completed {
+            color: var(--success);
+        }
+
+        /* Field Loading Indicator */
+        .field-loading {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .field-loading.active {
+            opacity: 1;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        /* Skeleton Loading for Results */
+        .skeleton-line {
+            height: 16px;
+            background: linear-gradient(90deg, var(--gray-200) 0%, var(--gray-300) 50%, var(--gray-200) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+
+        .skeleton-line.title {
+            height: 24px;
+            width: 60%;
+        }
+
+        .skeleton-line.short {
+            width: 40%;
+        }
+
+        .skeleton-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--gray-200);
         }
 
         /* Top Bar */
@@ -435,6 +639,8 @@
             align-items: center;
             gap: 12px;
             border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
         .endpoint-btn:hover {
@@ -447,6 +653,20 @@
             color: var(--white);
             border-left-color: var(--accent);
             box-shadow: 0 8px 16px rgba(0, 59, 106, 0.15);
+        }
+
+        .endpoint-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,255,255,0.2) 50%,
+                transparent 100%);
+            animation: shimmer 1.5s infinite;
         }
 
         .method-badge {
@@ -503,6 +723,11 @@
 
         .method-tag.get { background: #E0F2FE; color: #0369A1; }
         .method-tag.post { background: #DCFCE7; color: #166534; }
+
+        /* Progress Bar in Panel */
+        .panel-progress {
+            margin: 20px 0;
+        }
 
         /* Protected Token Card */
         .token-card {
@@ -582,6 +807,7 @@
 
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .form-group label {
@@ -606,6 +832,13 @@
             border-color: var(--accent);
             outline: none;
             box-shadow: 0 0 0 4px rgba(200, 168, 107, 0.1);
+        }
+
+        .form-group.loading input {
+            border-color: var(--accent);
+            background: linear-gradient(90deg, var(--white) 0%, var(--gray-50) 50%, var(--white) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
 
         .form-row {
@@ -667,6 +900,11 @@
             color: white;
         }
 
+        .account-card.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         .account-card h4 {
             margin-bottom: 5px;
             font-size: 16px;
@@ -695,6 +933,8 @@
             justify-content: center;
             gap: 10px;
             border: 1px solid var(--accent);
+            position: relative;
+            overflow: hidden;
         }
 
         .execute-btn:hover:not(:disabled) {
@@ -706,6 +946,20 @@
             background: var(--gray-300);
             cursor: not-allowed;
             border-color: var(--gray-300);
+        }
+
+        .execute-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,255,255,0.2) 50%,
+                transparent 100%);
+            animation: shimmer 1.5s infinite;
         }
 
         /* Response Section */
@@ -765,6 +1019,22 @@
             border: 1px solid #334155;
         }
 
+        /* Loading Skeleton for Response */
+        .response-skeleton {
+            background: #0F172A;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .skeleton-response-line {
+            height: 16px;
+            background: linear-gradient(90deg, #2D3748 0%, #4A5568 50%, #2D3748 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
         /* Loading Spinner */
         .spinner {
             display: inline-block;
@@ -794,6 +1064,10 @@
             z-index: 1000;
             box-shadow: 0 12px 24px rgba(0, 59, 106, 0.25);
             border-left: 4px solid var(--accent);
+        }
+
+        .toast.loading {
+            background: var(--gray-800);
         }
 
         @keyframes slideIn {
@@ -837,6 +1111,23 @@
     </style>
 </head>
 <body>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-card">
+        <div class="loading-spinner-large"></div>
+        <h3 style="color: var(--primary-dark); margin-bottom: 15px;" id="loadingMessage">Processing Request</h3>
+        <div class="progress-container">
+            <div class="progress-bar" id="loadingProgress" style="width: 0%;"></div>
+        </div>
+        <div class="progress-steps" id="progressSteps">
+            <div class="step" id="step1">Validating</div>
+            <div class="step" id="step2">Processing</div>
+            <div class="step" id="step3">Calculating</div>
+            <div class="step" id="step4">Finalizing</div>
+        </div>
+    </div>
+</div>
+
 <!-- Top Bar -->
 <div class="top-bar"></div>
 
@@ -845,7 +1136,7 @@
     <div class="logo-area">
         <div class="logo-icon">D</div>
         <div class="logo-text">
-            <h1>Durksie</h1>
+            <h1>Durksie </h1>
             <p>Banking API Console</p>
         </div>
     </div>
@@ -858,7 +1149,7 @@
     <!-- Hero Banner -->
     <div class="hero-banner">
         <div class="hero-text">
-            <h2>Welcome to <strong>Durksie</strong></h2>
+            <h2>Welcome to <strong>Durksie </strong></h2>
             <p>Professional banking API test console - Built by Durksie</p>
         </div>
         <div class="hero-stats">
@@ -919,15 +1210,15 @@
                 <div class="group-title">
                     <span>🔓</span> Public (No Auth)
                 </div>
-                <button class="endpoint-btn" onclick="selectEndpoint('account-types')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('account-types', event)">
                     <span class="method-badge get">GET</span>
                     Get Account Types
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('register')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('register', event)">
                     <span class="method-badge post">POST</span>
                     Register
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('login')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('login', event)">
                     <span class="method-badge post">POST</span>
                     Login
                 </button>
@@ -937,27 +1228,27 @@
                 <div class="group-title">
                     <span>🔒</span> Protected (Bearer Token)
                 </div>
-                <button class="endpoint-btn" onclick="selectEndpoint('account-details')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('account-details', event)">
                     <span class="method-badge get">GET</span>
                     Account Details
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('deposit')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('deposit', event)">
                     <span class="method-badge post">POST</span>
                     Deposit
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('withdraw')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('withdraw', event)">
                     <span class="method-badge post">POST</span>
                     Withdraw
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('verify-account')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('verify-account', event)">
                     <span class="method-badge get">GET</span>
                     Verify Account
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('transfer')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('transfer', event)">
                     <span class="method-badge post">POST</span>
                     Transfer
                 </button>
-                <button class="endpoint-btn" onclick="selectEndpoint('transactions')">
+                <button class="endpoint-btn" onclick="selectEndpointWithDelay('transactions', event)">
                     <span class="method-badge get">GET</span>
                     Transactions
                 </button>
@@ -971,11 +1262,18 @@
                 <span class="method-tag" id="methodBadge"></span>
             </div>
 
+            <!-- Progress Bar in Panel -->
+            <div class="panel-progress" id="panelProgress" style="display: none;">
+                <div class="progress-container">
+                    <div class="progress-bar" id="panelProgressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
             <!-- Dynamic Form -->
             <div id="dynamicForm"></div>
 
             <!-- Execute Button -->
-            <button class="execute-btn" onclick="sendRequest()" id="sendBtn">
+            <button class="execute-btn" onclick="sendRequestWithDelay()" id="sendBtn">
                 <span id="btnText">Execute Request</span>
                 <span id="btnSpinner" class="spinner" style="display: none;"></span>
             </button>
@@ -988,14 +1286,29 @@
                 </div>
                 <div class="response-body" id="responseBody"></div>
             </div>
+
+            <!-- Loading Skeleton for Response (shown during artificial delay) -->
+            <div class="response-section" id="responseSkeleton" style="display: none;">
+                <div class="response-header">
+                    <h3>📥 Loading Response</h3>
+                    <span class="response-badge" style="background: var(--gray-400);">Processing</span>
+                </div>
+                <div class="response-skeleton">
+                    <div class="skeleton-response-line" style="width: 90%;"></div>
+                    <div class="skeleton-response-line" style="width: 75%;"></div>
+                    <div class="skeleton-response-line" style="width: 85%;"></div>
+                    <div class="skeleton-response-line" style="width: 60%;"></div>
+                    <div class="skeleton-response-line" style="width: 95%;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <div class="brand"><span>Durksie</span></div>
+        <div class="brand"><span>Durksie </span></div>
         <p>Banking API Console v1.0 • Sandbox Environment</p>
-        <p style="margin-top: 10px; font-size: 12px;">© 2026 Durksie - Professional Banking API Interface</p>
+        <p style="margin-top: 10px; font-size: 12px;">© 2024 Durksie  - Professional Banking API Interface</p>
     </div>
 </div>
 
@@ -1005,6 +1318,10 @@
     let currentEndpoint = null;
     const PROTECTED_ENDPOINTS = ['account-details', 'deposit', 'withdraw', 'verify-account', 'transfer', 'transactions'];
 
+    // Loading State Variables
+    let loadingTimeout = null;
+    let progressInterval = null;
+
     // Test connection on load
     document.addEventListener('DOMContentLoaded', () => {
         testConnection();
@@ -1013,6 +1330,193 @@
         }, 100);
     });
 
+    // Show Loading Overlay with Progress
+    function showLoadingOverlay(message = 'Processing Request', duration = 2000) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const progressBar = document.getElementById('loadingProgress');
+            const steps = {
+                step1: document.getElementById('step1'),
+                step2: document.getElementById('step2'),
+                step3: document.getElementById('step3'),
+                step4: document.getElementById('step4')
+            };
+
+            // Reset
+            loadingMessage.textContent = message;
+            progressBar.style.width = '0%';
+            Object.values(steps).forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+
+            overlay.classList.add('active');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+
+                // Update steps based on progress
+                if (progress >= 25) {
+                    steps.step1.classList.add('completed');
+                }
+                if (progress >= 25 && progress < 50) {
+                    steps.step2.classList.add('active');
+                }
+                if (progress >= 50) {
+                    steps.step2.classList.remove('active');
+                    steps.step2.classList.add('completed');
+                }
+                if (progress >= 50 && progress < 75) {
+                    steps.step3.classList.add('active');
+                }
+                if (progress >= 75) {
+                    steps.step3.classList.remove('active');
+                    steps.step3.classList.add('completed');
+                }
+                if (progress >= 75 && progress < 100) {
+                    steps.step4.classList.add('active');
+                }
+                if (progress >= 100) {
+                    steps.step4.classList.remove('active');
+                    steps.step4.classList.add('completed');
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        resolve();
+                    }, 300);
+                }
+            }, duration / 100);
+        });
+    }
+
+    // Show Panel Progress
+    function showPanelProgress(duration = 1500) {
+        return new Promise((resolve) => {
+            const panelProgress = document.getElementById('panelProgress');
+            const progressBar = document.getElementById('panelProgressBar');
+
+            panelProgress.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        panelProgress.style.display = 'none';
+                        resolve();
+                    }, 200);
+                }
+            }, duration / 100);
+        });
+    }
+
+    // Show Field Loading State
+    function showFieldLoading(fieldId, duration = 800) {
+        return new Promise((resolve) => {
+            const field = document.getElementById(fieldId);
+            if (!field) {
+                resolve();
+                return;
+            }
+
+            const formGroup = field.closest('.form-group');
+            if (formGroup) {
+                formGroup.classList.add('loading');
+
+                // Create loading indicator if not exists
+                let loadingIndicator = formGroup.querySelector('.field-loading');
+                if (!loadingIndicator) {
+                    loadingIndicator = document.createElement('div');
+                    loadingIndicator.className = 'field-loading';
+                    formGroup.appendChild(loadingIndicator);
+                }
+                loadingIndicator.classList.add('active');
+
+                setTimeout(() => {
+                    formGroup.classList.remove('loading');
+                    loadingIndicator.classList.remove('active');
+                    resolve();
+                }, duration);
+            } else {
+                setTimeout(resolve, duration);
+            }
+        });
+    }
+
+    // Show Skeleton Response
+    function showSkeletonResponse(duration = 1500) {
+        return new Promise((resolve) => {
+            const responseSkeleton = document.getElementById('responseSkeleton');
+            const responseSection = document.getElementById('responseSection');
+
+            responseSection.style.display = 'none';
+            responseSkeleton.style.display = 'block';
+
+            setTimeout(() => {
+                responseSkeleton.style.display = 'none';
+                resolve();
+            }, duration);
+        });
+    }
+
+    // Select Endpoint with Artificial Delay
+    async function selectEndpointWithDelay(endpoint, event) {
+        currentEndpoint = endpoint;
+
+        // Remove active class from all buttons
+        document.querySelectorAll('.endpoint-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Add loading class to clicked button
+        const clickedBtn = event.currentTarget;
+        clickedBtn.classList.add('loading');
+
+        // Add active class
+        clickedBtn.classList.add('active');
+
+        // Show panel progress
+        showPanelProgress(800);
+
+        // Simulate loading for form update
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        // Remove loading class
+        clickedBtn.classList.remove('loading');
+
+        // Update form
+        updateForm(endpoint);
+    }
+
+    // Send Request with Artificial Delay
+    async function sendRequestWithDelay() {
+        if (!currentEndpoint) {
+            showToast('Please select an endpoint');
+            return;
+        }
+
+        // Show loading overlay
+        showLoadingOverlay('Processing API Request', 2000);
+
+        // Show skeleton response
+        showSkeletonResponse(1800);
+
+        // Small delay before actual request
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Call actual send request
+        await sendRequest();
+    }
+
     // Test connection
     async function testConnection() {
         const dot = document.getElementById('connectionDot');
@@ -1020,6 +1524,9 @@
 
         dot.className = 'dot';
         text.textContent = 'Testing connection...';
+
+        // Artificial delay for connection test
+        await new Promise(resolve => setTimeout(resolve, 800));
 
         try {
             const response = await fetch(`${BASE_URL}/api/auth/account-types`, {
@@ -1031,6 +1538,7 @@
             if (response.ok) {
                 dot.className = 'dot connected';
                 text.textContent = 'Connected to server';
+                showToast('✅ Connection successful', 'success');
             } else {
                 dot.className = 'dot disconnected';
                 text.textContent = 'Server error';
@@ -1083,7 +1591,7 @@
             `;
         }
 
-        // Endpoint specific forms (keeping your exact logic)
+        // Endpoint specific forms
         switch(endpoint) {
             case 'account-types':
                 title = 'Get Account Types';
@@ -1103,15 +1611,15 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Username *</label>
-                            <input type="text" id="regUsername" value="testuser_${Date.now()}">
+                            <input type="text" id="regUsername" value="testuser_${Date.now()}" onfocus="showFieldLoading('regUsername', 600)">
                         </div>
                         <div class="form-group">
                             <label>Password *</label>
-                            <input type="password" id="regPassword" value="password123">
+                            <input type="password" id="regPassword" value="password123" onfocus="showFieldLoading('regPassword', 600)">
                         </div>
                         <div class="form-group">
                             <label>Account Type *</label>
-                            <select id="regAccountType">
+                            <select id="regAccountType" onfocus="showFieldLoading('regAccountType', 600)">
                                 <option value="Easy Account">Easy Account ($0 - $10,000)</option>
                                 <option value="Aspire Account">Aspire Account ($1,000 - $50,000)</option>
                                 <option value="Premier Account">Premier Account ($10,000 - $200,000)</option>
@@ -1121,23 +1629,23 @@
                         </div>
                     </div>
                     <div class="account-grid">
-                        <div class="account-card" onclick="selectAccountType('Easy Account')">
+                        <div class="account-card" onclick="selectAccountTypeWithDelay('Easy Account', event)">
                             <h4>Easy Account</h4>
                             <small>$0 - $10,000</small>
                         </div>
-                        <div class="account-card" onclick="selectAccountType('Aspire Account')">
+                        <div class="account-card" onclick="selectAccountTypeWithDelay('Aspire Account', event)">
                             <h4>Aspire Account</h4>
                             <small>$1,000 - $50,000</small>
                         </div>
-                        <div class="account-card" onclick="selectAccountType('Premier Account')">
+                        <div class="account-card" onclick="selectAccountTypeWithDelay('Premier Account', event)">
                             <h4>Premier Account</h4>
                             <small>$10,000 - $200,000</small>
                         </div>
-                        <div class="account-card" onclick="selectAccountType('Private Clients Account')">
+                        <div class="account-card" onclick="selectAccountTypeWithDelay('Private Clients Account', event)">
                             <h4>Private Clients</h4>
                             <small>$50,000 - $500,000</small>
                         </div>
-                        <div class="account-card" onclick="selectAccountType('Private Wealth Account')">
+                        <div class="account-card" onclick="selectAccountTypeWithDelay('Private Wealth Account', event)">
                             <h4>Private Wealth</h4>
                             <small>$200,000+</small>
                         </div>
@@ -1152,11 +1660,11 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Username *</label>
-                            <input type="text" id="loginUsername" placeholder="Enter your username">
+                            <input type="text" id="loginUsername" placeholder="Enter your username" onfocus="showFieldLoading('loginUsername', 600)">
                         </div>
                         <div class="form-group">
                             <label>Password *</label>
-                            <input type="password" id="loginPassword" placeholder="Enter your password">
+                            <input type="password" id="loginPassword" placeholder="Enter your password" onfocus="showFieldLoading('loginPassword', 600)">
                         </div>
                     </div>
                 `;
@@ -1180,7 +1688,7 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Amount *</label>
-                            <input type="number" id="depositAmount" placeholder="Enter amount" min="0.01" step="0.01">
+                            <input type="number" id="depositAmount" placeholder="Enter amount" min="0.01" step="0.01" onfocus="showFieldLoading('depositAmount', 600)">
                         </div>
                     </div>
                 `;
@@ -1193,7 +1701,7 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Amount *</label>
-                            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="0.01" step="0.01">
+                            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="0.01" step="0.01" onfocus="showFieldLoading('withdrawAmount', 600)">
                         </div>
                     </div>
                 `;
@@ -1210,7 +1718,7 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Account Number *</label>
-                            <input type="text" id="verifyAccountNumber" placeholder="Enter account number to verify">
+                            <input type="text" id="verifyAccountNumber" placeholder="Enter account number to verify" onfocus="showFieldLoading('verifyAccountNumber', 600)">
                         </div>
                     </div>
                 `;
@@ -1227,19 +1735,19 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Destination Account *</label>
-                            <input type="text" id="transferDestAccount" placeholder="Enter verified account number">
+                            <input type="text" id="transferDestAccount" placeholder="Enter verified account number" onfocus="showFieldLoading('transferDestAccount', 600)">
                         </div>
                         <div class="form-group">
                             <label>Recipient Name *</label>
-                            <input type="text" id="transferRecipient" placeholder="Enter recipient name">
+                            <input type="text" id="transferRecipient" placeholder="Enter recipient name" onfocus="showFieldLoading('transferRecipient', 600)">
                         </div>
                         <div class="form-group">
                             <label>Amount *</label>
-                            <input type="number" id="transferAmount" placeholder="Enter amount" min="0.01" step="0.01">
+                            <input type="number" id="transferAmount" placeholder="Enter amount" min="0.01" step="0.01" onfocus="showFieldLoading('transferAmount', 600)">
                         </div>
                         <div class="form-group">
                             <label>Description</label>
-                            <input type="text" id="transferDescription" placeholder="Payment for...">
+                            <input type="text" id="transferDescription" placeholder="Payment for..." onfocus="showFieldLoading('transferDescription', 600)">
                         </div>
                     </div>
                 `;
@@ -1271,6 +1779,28 @@
         }
     }
 
+    // Select Account Type with Delay
+    async function selectAccountTypeWithDelay(type, event) {
+        const card = event.currentTarget;
+        card.classList.add('loading');
+
+        await showFieldLoading('regAccountType', 600);
+
+        const select = document.getElementById('regAccountType');
+        if (select) {
+            select.value = type;
+        }
+
+        document.querySelectorAll('.account-card').forEach(card => {
+            card.classList.remove('selected');
+            if (card.textContent.includes(type)) {
+                card.classList.add('selected');
+            }
+        });
+
+        card.classList.remove('loading');
+    }
+
     // Update auth header preview
     function updateAuthHeaderPreview() {
         const tokenInput = document.getElementById('endpointToken');
@@ -1291,21 +1821,6 @@
         }
     }
 
-    // Select Account Type
-    function selectAccountType(type) {
-        const select = document.getElementById('regAccountType');
-        if (select) {
-            select.value = type;
-        }
-
-        document.querySelectorAll('.account-card').forEach(card => {
-            card.classList.remove('selected');
-            if (card.textContent.includes(type)) {
-                card.classList.add('selected');
-            }
-        });
-    }
-
     // Use global token in current endpoint
     function useGlobalTokenInCurrent() {
         const globalToken = document.getElementById('globalJwtToken').value;
@@ -1317,13 +1832,8 @@
         }
     }
 
-    // Send request (keeping your exact logic)
+    // Send request (actual implementation)
     async function sendRequest() {
-        if (!currentEndpoint) {
-            showToast('Please select an endpoint');
-            return;
-        }
-
         const sendBtn = document.getElementById('sendBtn');
         const btnText = document.getElementById('btnText');
         const btnSpinner = document.getElementById('btnSpinner');
@@ -1350,7 +1860,7 @@
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            // Build URL based on endpoint (your exact logic)
+            // Build URL based on endpoint
             switch(currentEndpoint) {
                 case 'account-types':
                     url += '/api/auth/account-types';
@@ -1467,13 +1977,19 @@
     }
 
     // Show toast
-    function showToast(message) {
+    function showToast(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = 'toast';
+        if (type === 'loading') {
+            toast.classList.add('loading');
+        }
         toast.textContent = message;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
+
+    // Make showFieldLoading globally available
+    window.showFieldLoading = showFieldLoading;
 </script>
 </body>
 </html>
