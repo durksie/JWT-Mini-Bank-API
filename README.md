@@ -396,6 +396,32 @@ Open the HTML test client from any allowed origin
 
 # Start testing enjoy! 🚀
 
+
+## pgAdmin Connection Settings (Render PostgreSQL)
+
+### General Tab
+
+| Setting | Value |
+|--------|------|
+| Name | MiniBank Render DB |
+
+### Connection Tab
+
+| Field | Value |
+|------|------|
+| Host name/address | dpg-d6nvukshg0os73cdsl0g-a.oregon-postgres.render.com |
+| Port | 5432 |
+| Maintenance database | minibank_cdys |
+| Username | gift |
+| Password | tSZEr1jMegvpGRixTqMexCjquo16Ub81 |
+| Save Password | ✅ Enabled |
+
+### SSL Configuration (Required for Render)
+
+| Setting | Value |
+|--------|------|
+| SSL Mode | require |
+
 ```Built with love```
 
 ## 👨‍💻 Author
